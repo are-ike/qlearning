@@ -1,0 +1,35 @@
+concurrency?
+Assumed speed of cars = 24km/h (400m/min) 6.94m/s
+
+simulate
+- convert values 
+- how to pan
+- 2 lanes and 1, just positioning
+
+build env 
+- w/o env?
+- create random traffic class
+    - takes distance matrix as input
+    - get current traffic
+
+MAIN
+- generate distance matrix 
+- generate traffic matrix
+
+SIMULATION
+- draw the environment 3
+- create a mapping of nodes 4
+- loop through traffic matrix and generate cars 5
+- create car object, when it collides increment and decrement and continue moving. disappear if carpark or entrance 6
+- road object 
+
+
+19-07
+- generate cars based on road length
+- add move for cars in different directions 1/3
+- add cars one by one 4
+- determine when car reaches end 1
+- check if update traffic works 2
+
+-complete map (matrix and drawing)
+-add carpark to node and car park check
