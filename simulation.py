@@ -1,98 +1,72 @@
 import pygame
-from mapping import mappings
-from car import Car
+from mapping import nodes, roads
+from utils import draw_item
 from sys import exit
 
+screen_width = 1200
+screen_height = 800
+
+map_width = 4000
+map_height = 4000
 class TestSimulation:
-    def __init__(self, name, distance_matrix):
+    def __init__(self, name, map, before_loop, during_loop):
         self.name = name
-        self.distance_matrix = distance_matrix
-        self.car_objects = []
-        self.car_rects = []
+        self.screen = pygame.display.set_mode((screen_width,screen_height))
+        self.map = map
+        self.viewport_x = 0
+        self.viewport_y = 0
+        self.clock = pygame.time.Clock()
+        self.during_loop = during_loop
+        self.before_loop = before_loop
     
-    def draw_item(self, img_src, scale, angle=0):
-        def draw(position):
-            surf = pygame.image.load(img_src).convert_alpha()
-            scaled_surf = pygame.transform.scale(surf, scale)
-            rotated_surf = pygame.transform.rotate(scaled_surf, angle)
-            rect = rotated_surf.get_rect(topleft = position)
+    def build_display(self):
+        pygame.draw.rect(self.map,'#0d4b0d', pygame.Rect(pygame.Rect(0,0,map_width,map_height)))
+        self.draw_buildings()
+        self.draw_misc()
+        self.during_loop()
+ 
+    def draw_buildings(self):
+        for node in nodes:
+            pos = node["position"]
+            size = node["size"]
+            pygame.draw.rect(self.map, '#5c4033', (pos[0], pos[1], size[0], size[1]), border_radius=10)
+            pygame.draw.rect(self.map, node["color"], (pos[0] + 10, pos[1] + 10, size[0] - 20, size[1] - 20), border_radius=5)
+         
+    def draw_misc(self):
+        pygame.draw.rect(self.map,'#232323', pygame.Rect(pygame.Rect(710,140,220,200)))
+        pygame.draw.circle(self.map,'#232323', (850,270), 30 + 100)
+        pygame.draw.circle(self.map,'#5c4033', (850,270), 30)
 
-            return (rotated_surf, rect)
-        
-        return draw
-    
-    def draw_building(self, position):
-        draw_fn = self.draw_item('images/building2.png', (250,250)) 
-        return draw_fn(position)
-    
-    def draw_car(self, position, angle):
-        draw_fn = self.draw_item('images/car.png', (70,70), angle) 
-        return draw_fn(position)
-    
-    def draw_road(self, position, length, angle):
-        draw_fn = self.draw_item('images/road3.png', (400,length), angle) 
-        return draw_fn(position)
-    
-    def draw_node(self,screen,node):
-        screen.blit(*self.draw_building(node["position"])) 
-
-    def draw_edge(self,screen,road):
-        def get_angle(direction):
-            if(direction == "left"): return 270
-            if(direction == "right"): return 90
-            if(direction == "up"): return 180
-            if(direction == "down"): return 0
-
-        screen.blit(*self.draw_road(road["position"], road["length"], get_angle(road["direction"])))  
-
-    def generate_cars(self):
-        Car.generate_traffic_matrix(self.distance_matrix)
-
-        for i, nodes in enumerate(Car.traffic_matrix):
-            for to_node in nodes:
-                if to_node:
-                    for _ in range(to_node):
-                        new_car = Car(i)
-                        new_car.select_to_node()
-                        self.car_objects.append(new_car)
-
-
+        pygame.draw.rect(self.map,'#232323', pygame.Rect(pygame.Rect(910,240,120,100)))
 
     def run_simulation(self):
         pygame.init()
-        screen = pygame.display.set_mode((1200,800))
         pygame.display.set_caption(self.name) 
-        clock = pygame.time.Clock()
-
-        self.generate_cars()
- 
-        # grass_surf = pygame.image.load('images/grass.png').convert()
+        self.before_loop()
         
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
+            
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_LEFT]:
+                self.viewport_x -= 10
+            if keys[pygame.K_RIGHT]:
+                self.viewport_x += 10
+            if keys[pygame.K_UP]:
+                self.viewport_y -= 10
+            if keys[pygame.K_DOWN]:
+                self.viewport_y += 10
+            
+            self.build_display()
 
-            if len(self.car_rects) and len(self.car_objects):
-                for car in self.car_objects:
-                    if car.frames_left > 0:
-                         car.update_position(car.position[0] + 10)
+            self.viewport_x = max(0, min(self.viewport_x, map_width - screen_width))
+            self.viewport_y = max(0, min(self.viewport_y, map_height - screen_height))
 
-            # pygame.draw.rect(screen,'#268b07', pygame.Rect(0,0,1200,800))
-            pygame.draw.rect(screen,'#306b40', pygame.Rect(0,0,1200,800))
-          
-            for node in mappings["nodes"]:
-                self.draw_node(screen, node)
-
-            for edge in mappings["edges"]:
-                self.draw_edge(screen, edge)
-                  
-            for car in self.car_objects:
-                value = self.draw_car(**car.draw_car())
-                self.car_rects.append(value)
-                screen.blit(*value)
-    
+            # Blit the portion of the map corresponding to the viewport onto the screen
+            self.screen.blit(self.map, (0, 0), (self.viewport_x, self.viewport_y, screen_width, screen_height))
 
             pygame.display.update()
-            clock.tick(60)
+            self.clock.tick(60)

@@ -33,3 +33,8 @@ SIMULATION
 
 -complete map (matrix and drawing)
 -add carpark to node and car park check
+
+04-08
+-continue drawing. more roads and buildings in the map
+-add timer using number count for multiple cars to move one by one
+-update traffic and node move along various roads

@@ -1,58 +1,104 @@
-# def find_node_high_indegree
-# def mapping(dist_matrx):
-    
-mappings = {
-    "nodes": [
-        {
-            "id": 2,
-            "position": (100,100),
-            "car_park": True
-        },
-        {
-            "id": 1,
-            "position": (500,100),
-            "car_park": False
-         },
-        {
-            "id": 0,
-            "position": (900,100),
-            "car_park": False
-         },
-    ],
+def pos(num1, num2): return (num1 + 0, num2 + 0)
+def siz(num1, num2): return (num1 + 0, num2 + 0)
 
-    "edges": [
-        {
-            "position": (257,197), 
-            "direction": "right",
-            "length": 400,
-            "edges": [(1,2), (2,1)],
-            "left": 2,
-            "right": 1,
-            "down": None,
-            "up": None,
-        },
-        {
-            "position": (747,197), 
-            "direction": "right",
-            "length": 300,
-            "edges": [(1,0), (0,1)],
-            "left": 1,
-            "right": 0,
-            "down": None,
-            "up": None,
-        },
-        # {
-        #     "position": (500,350), 
-        #     "direction": "down",
-        #     "length": 500,
-        #     "edges": [(1,4)],
-        #     "left": None,
-        #     "right": None,
-        #     "down": 4,
-        #     "up": 1,
-        # },
-    ]
-}
+nodes = [
+    {
+        "id": 0,
+        "position": pos(730,30),
+        "size": siz(200,100),
+        "type": 1,
+        "color": '#c4a484',
+    },
+    {
+        "id": 1,
+        "position": pos(600,30),
+        "size": siz(100,200),
+        "type": 1,
+        "color": '#c4a484'
+    },
+]
+
+roads = [
+    {
+        "edges": [
+            {
+                "from_node": 0,
+                "to_node": 1,
+                "direction": "down"
+            },
+            {
+                "from_node": 1,
+                "to_node": 0,
+                "direction": "up"
+            },
+        ],
+        "coordinates": (790,330,120,400)
+    }
+]
+
+roundabouts = [
+    {
+        "position": pos(850,270),
+        
+    }
+]
+
+green = [
+    {
+        "position": pos(130,130),
+        "size": siz(240,140),
+    },
+    {
+        "position": pos(220,270),
+        "size": siz(60,500),
+    },
+    {
+        "position": pos(50,270),
+        "size": siz(60,500),
+    },
+]
+
+misc = [
+    {
+        "position": pos(80,80),
+        "size": siz(240,140),
+    },
+    {
+        "position": pos(170,220),
+        "size": siz(60,500),
+    },
+]
+
+# edges = [
+#     {
+#         , 
+#         "direction": "right",
+#         "length": 400,
+#         
+#         
+#     },
+#     {
+#         "position": (747,197), 
+#         "direction": "right",
+#         "length": 300,
+#         "edges": [(1,0), (0,1)],
+#         "left": 1,
+#         "right": 0,
+#         "down": None,
+#         "up": None,
+#     },
+#     # {
+#     #     "position": (500,350), 
+#     #     "direction": "down",
+#     #     "length": 500,
+#     #     "edges": [(1,4)],
+#     #     "left": None,
+#     #     "right": None,
+#     #     "down": 4,
+#     #     "up": 1,
+#     # },
+#     ]
+
 
 
 

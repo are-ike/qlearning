@@ -1,41 +1,25 @@
 import random
-from mapping import mappings
+from utils import draw_item
+# from mapping import mappings
 
 FRAMES = 60
 random.seed(12)
 
 class Car:
-    traffic_matrix = []
-    distance_matrix = []
 
-    def __init__(self, from_node):
+    def __init__(self, from_node, to_node, direction, road):
         self.from_node = from_node
-        self.to_node = None
+        self.to_node = to_node
+        self.road = road
+        self.direction = direction
+        self.rect = None
         self.position = None
         self.angle = None
-        self.frames_left = None
+    #ifnotcontains
+    def start(self, map):
+        self.draw(map)
+        self.move()
 
-
-    @staticmethod
-    def generate_empty_matrix(node_number):
-        space = []
-        for _ in range(node_number):
-            space.append([0]*node_number)
-        return space
-
-    def generate_traffic_matrix(distance_matrix):
-        size = len(distance_matrix)
-        matrix = Car.generate_empty_matrix(size)
-
-        for i in range(size):
-            for j in range(size):
-                if distance_matrix[i][j]:
-                    #matrix[i][j] = random.randint(0,2)
-                    matrix[i][j] = 1
-
-        Car.traffic_matrix = matrix
-        Car.distance_matrix = distance_matrix
-    
     def select_to_node (self):
         options = []
         
@@ -45,51 +29,41 @@ class Car:
                 
         self.to_node = options[random.randint(0,len(options)-1)]
     
-    def draw_car(self):
-        if self.position == None:
-            edge = None
-            for edges in mappings["edges"]:
-                for ed in edges["edges"]:
-                    if ed[0] == self.from_node and ed[1] == self.to_node:
-                        edge = edges
-            
-            if not edge: return
+    def draw(self, map):
+        rect = self.road.rect
+        car_size = 70
+        space = 10
 
-            self.frames_left = 400
-            #math.ceil((edge["length"] / 6.94) * FRAMES)
-
-            if edge["right"] == self.from_node: 
+        if self.position == None: 
+            if self.direction == "right": 
                 self.angle = 180
-                self.position = (edge["position"][0] + edge["length"] - 80, edge["position"][1] + 140)
-            if edge["left"] == self.from_node: 
+                self.position = (rect.left + car_size, rect.top + space)
+            if self.direction == "left": 
                 self.angle = 0
-                self.position = (edge["position"][0] , edge["position"][1] + 185)
-            if edge["up"] == self.from_node: 
+                self.position = (rect.right - car_size, rect.bottom - car_size)
+            if self.direction == "up": 
                 self.angle = 90
-                self.position = (edge["position"][0] , edge["position"][1])
-            if edge["down"] == self.from_node: 
+                self.position = (rect.left, rect.bottom - car_size)
+            if self.direction == "down": 
                 self.angle = 270
-                self.position = (edge["position"][0] , edge["position"][1])
+                self.position = (rect.right - car_size, rect.top + car_size)
 
-        values = {
-            "position": self.position,
-            "angle": self.angle,
-        }
+        draw_fn = draw_item('images/car.png', (car_size,car_size), self.angle) 
+        surf_and_rect = draw_fn(self.position)
+        self.rect = surf_and_rect[1]
+        map.blit(*surf_and_rect)
 
-        return values
+    def move(self):
+        x = self.position[0]
+        y = self.position[1]
+        dist = 15
 
-    def move(self, frames):
-        if frames == 0:
-            Car.traffic_matrix[self.from_node][self.to_node] -= 1
-        
-            self.from_node = self.to_node
-            self.select_to_node()
-
-            Car.traffic_matrix[self.from_node][self.to_node] += 1
-            #remove car
-        else:
-            self.frames_left = frames
-
-    def update_position(self, x=None, y=None):
-        self.position = (x if x else self.position[0], y if y else self.position[1])
+        if self.direction == "right": 
+            self.position = (dist + x, y)
+        if self.direction == "left": 
+            self.position = (x - dist, y)
+        if self.direction == "up": 
+            self.position = (x, y - dist)
+        if self.direction == "down": 
+            self.position = (x, y + dist)
 
