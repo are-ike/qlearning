@@ -38,3 +38,15 @@ SIMULATION
 -continue drawing. more roads and buildings in the map
 -add timer using number count for multiple cars to move one by one
 -update traffic and node move along various roads
+
+
+Later
+-add speed based on road
+-generate cars based on road length
+-roundabout and u turns
+-dont go back for cars
+-kill cars with no road
+
+Issues
+-overlapping
+-direction fail

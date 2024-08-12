@@ -85,3 +85,11 @@ def draw_item(img_src, scale, angle=0):
 
             # for edge in mappings["edges"]:
             #     self.draw_edge(screen, edge)
+
+        # for road in self.roads:
+        #     road.draw(self.map) #Drawing road here so that road shows during loop
+
+        # for car in self.cars:
+        #     car.start(self.map)
+            #for _  in range(100): continue
+            #pygame.time.delay(2000)

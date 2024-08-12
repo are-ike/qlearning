@@ -1,6 +1,5 @@
 import pygame
-from mapping import nodes, roads
-from utils import draw_item
+from mapping import nodes
 from sys import exit
 
 screen_width = 1200
@@ -42,13 +41,18 @@ class TestSimulation:
     def run_simulation(self):
         pygame.init()
         pygame.display.set_caption(self.name) 
-        self.before_loop()
+        cars = pygame.sprite.Group()
+        roads = pygame.sprite.Group()
+        self.before_loop(roads, cars)
         
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_RETURN:
+                        self.during_loop()
             
             keys = pygame.key.get_pressed()
             if keys[pygame.K_LEFT]:
@@ -61,6 +65,10 @@ class TestSimulation:
                 self.viewport_y += 10
             
             self.build_display()
+
+            roads.draw(self.map)
+            cars.draw(self.map)
+            cars.update()
 
             self.viewport_x = max(0, min(self.viewport_x, map_width - screen_width))
             self.viewport_y = max(0, min(self.viewport_y, map_height - screen_height))
