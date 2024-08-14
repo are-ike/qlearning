@@ -46,7 +46,43 @@ Later
 -roundabout and u turns
 -dont go back for cars
 -kill cars with no road
+-slowing down time with traffic?
 
 Issues
 -overlapping
 -direction fail
+
+---
+test and train on light medium and heavy traffic
+introduce surges and decreases in testing
+random agent position
+----
+environment variations: traffic
+cross-validation
+---
+all metrics
+----
+hyperparameter tuning
+----
+agent going out of bounds
+---
+decay
+
+
+To do
+-position agent
+-putting -1 for qtable
+-change car
+-prevent collisions
+-track time
+-evaluation metrics
+-test with full traffic
+-cleanup
+
+-distances
+-build campus
+-generate, test and train on light medium and heavy traffic
+-introduce surges and decreases in testing
+-hyperparameter tuning
+-decay
+-issues

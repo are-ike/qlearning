@@ -16,7 +16,7 @@ class Car(pygame.sprite.Sprite):
     roads = []
     carparks = []
 
-    def __init__(self, from_node, to_node, direction, road):
+    def __init__(self, from_node, to_node, direction, road, img_src='images/car.png'):
         pygame.sprite.Sprite.__init__(self)
         self.from_node = from_node
         self.to_node = to_node
@@ -26,7 +26,8 @@ class Car(pygame.sprite.Sprite):
         self.angle = None
         self.update_traffic = None
         self.get_traffic = None
-        val = self.get_rect_surf()
+        self.img_src = img_src
+        val = self.get_rect_surf() 
         self.rect = val[1]
         self.image = val[0]
 
@@ -86,7 +87,7 @@ class Car(pygame.sprite.Sprite):
                 self.angle = 270 
                 self.position = (rect.left -10 , rect.top + space)
 
-        draw_fn = draw_item('images/car.png', (car_size,car_size), self.angle) 
+        draw_fn = draw_item(self.img_src, (car_size,car_size), self.angle) 
         surf_and_rect = draw_fn(self.position)
         return surf_and_rect
     
