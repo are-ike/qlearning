@@ -1,16 +1,15 @@
 import numpy as np
 import random
 from environment import QlearningEnv
-from utils import generate_empty_matrix
 import pygame
-import threading
 
 map_width = 4000
 map_height = 4000
 
 map = pygame.Surface((map_width,map_height))
 
-carpark_idxs = [0, 3, 5]
+#carpark_idxs = [0, 3, 5]
+carpark_idxs = [0]
 
 size = 6
 
@@ -37,7 +36,7 @@ env = QlearningEnv(distance_matrix, carpark_idxs, map)
 
 #Q-Learning
 
-q_table = np.full((size, size), -1)
+q_table = np.full((size, size), -np.inf)
 
 for dist in distances:
     i = dist[0]
@@ -63,7 +62,7 @@ def train():
                 action = np.argmax(q_table[state])
 
             next_state, reward, done = env.step(action)
-            print(state, action, next_state, reward, done)
+            #print(state, action, next_state, reward, done)
 
             old_value = q_table[state][action]
             next_max = np.max(q_table[next_state])
@@ -75,8 +74,6 @@ def train():
 
     return q_table
 
-# simThread = threading.Thread(target=train)
-# simThread.start()
 table = train()
 print(table)
 

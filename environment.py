@@ -1,8 +1,7 @@
 import gymnasium
 import numpy as np
-from gymnasium.spaces import Box, Discrete, Dict
+from gymnasium.spaces import Box, Dict
 from traffic import Traffic
-import threading
 
 class QlearningEnv(gymnasium.Env):
     def __init__(self, distance_matrix, carparks, map):
@@ -99,7 +98,8 @@ class QlearningEnv(gymnasium.Env):
         return (i,j)
 
     def generate_traffic(self):
-        self.traffic_matrix = [[0,1,0,0,0,0], [0,0,1,0,0,0], [0,0,0,0,0,0], [0,0,0,0,0,0], [0,0,0,0,0,0], [0,0,0,0,0,0]]
+        self.traffic_matrix = [[0,2,0,0,0,0], [2,0,0,0,0,0], [0,0,0,1,0,1], [0,0,0,0,0,0], [0,0,0,0,0,1], [0,0,0,0,0,0]]
+        #self.traffic_matrix = [[0,1,0,0,0,0], [0,0,1,0,0,0], [0,0,0,1,0,0], [0,0,1,0,1,0], [0,0,0,1,0,1], [0,0,1,0,1,0]]
     
     def get_traffic(self):
         return self.traffic_matrix

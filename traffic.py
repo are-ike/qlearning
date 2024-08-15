@@ -54,22 +54,23 @@ class Traffic:
         
 
     def generate_traffic(self, road_group, car_group, agent_group):
-        for road in roads:
+        for i,road in enumerate(roads):
             new_road =  Road(road["coordinates"], road["edges"])
             new_road.draw(self.map) #Drawing road here so that cars have access to road rect before loop
             
-            for edge in road["edges"]:
+            for j,edge in enumerate(road["edges"]):
                 traffic = self.traffic_matrix[edge["from_node"]][edge["to_node"]]
 
-                for _ in range(traffic):
+                for k in range(traffic):
                     new_car = None
+                    id = f"{i}{j}{k}"
 
                     if self.agent_position[0] == edge["from_node"] and self.agent_position[1] == edge["to_node"]:
-                        agent = Agent(edge["from_node"], edge["to_node"], edge["direction"], new_road)
+                        agent = Agent(self.map, edge["from_node"], edge["to_node"], edge["direction"], new_road)
                         self.agent = agent
                         agent_group.add(agent)
                     else:
-                        new_car = Car(edge["from_node"], edge["to_node"], edge["direction"], new_road)
+                        new_car = Car(self.map, edge["from_node"], edge["to_node"], edge["direction"], new_road)
                         new_car.update_traffic = self.update_traffic
                         new_car.get_traffic = self.get_traffic
 
@@ -83,6 +84,8 @@ class Traffic:
         
         #add all roads to Car
         Car.set_roads(self.roads)
+        Car.set_cars(self.cars)
+        Car.set_agent(self.agent)
         #Car.set_carparks(self.carparks)
         
         
