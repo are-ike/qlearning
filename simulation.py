@@ -5,8 +5,8 @@ from sys import exit
 screen_width = 1200
 screen_height = 800
 
-map_width = 4000
-map_height = 4000
+map_width = 20000
+map_height = 20000
 class TestSimulation:
     def __init__(self, name, map, before_loop, during_loop):
         self.name = name
@@ -35,11 +35,14 @@ class TestSimulation:
             pygame.draw.rect(self.map, node["color"], (pos[0] + 10, pos[1] + 10, size[0] - 20, size[1] - 20), border_radius=5)
          
     def draw_misc(self):
+        #dli roundabount 1
         pygame.draw.rect(self.map,'#232323', pygame.Rect(pygame.Rect(710,140,220,200)))
         pygame.draw.circle(self.map,'#232323', (850,270), 30 + 100)
         pygame.draw.circle(self.map,'#5c4033', (850,270), 30)
-
         pygame.draw.rect(self.map,'#232323', pygame.Rect(pygame.Rect(910,240,120,100)))
+
+        pygame.draw.circle(self.map,'#232323', (850,270), 30 + 100)
+        pygame.draw.circle(self.map,'#5c4033', (850,270), 30)
 
     def run_simulation(self):
 
@@ -63,13 +66,13 @@ class TestSimulation:
         
             keys = pygame.key.get_pressed()
             if keys[pygame.K_LEFT]:
-                self.viewport_x -= 10
+                self.viewport_x -= 50
             if keys[pygame.K_RIGHT]:
-                self.viewport_x += 10
+                self.viewport_x += 50
             if keys[pygame.K_UP]:
-                self.viewport_y -= 10
+                self.viewport_y -= 50
             if keys[pygame.K_DOWN]:
-                self.viewport_y += 10
+                self.viewport_y += 50
         
             self.build_display()
 
@@ -106,7 +109,7 @@ class TestSimulation:
             pygame.display.update()
             self.clock.tick(60)
 
-            if not agent.get_is_moving(): return
+            #if not agent.get_is_moving(): return
             # if not loop or not agent.get_is_moving(): break
 
     def init_simulation(self):

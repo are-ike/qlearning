@@ -1,4 +1,5 @@
 Assumed speed of cars = 24km/h (400m/min) 6.94m/s
+-slowing down time with traffic and increasing speed 
 
 ---
 test and train on light medium and heavy traffic
@@ -23,23 +24,18 @@ To do
 -track time
 -evaluation metrics
 -test with full traffic
--cleanup
--prevent collisions- agent colliding
 
--distances
--build campus
 
 
 Friday
 -build campus
+-distances
 -roundabout and u turns
--dont go back for cars
--slowing down time with traffic and increasing speed 
--stop jumping of cars when straight
+
 
 
 Saturday
--turn car back for agent and car
+
 -generate, test and train on light medium and heavy traffic
 -introduce surges and decreases in testing
 -hyperparameter tuning
@@ -49,6 +45,13 @@ Saturday
 
 
 
+Next week
+-stop jumping of cars when straight
+-turn car back for agent and car
+-dont go back for cars
+-prevent collisions- agent colliding
+-cleanup
+
 -call to schedule
 if today:
     patches, lines, park indicator
@@ -57,5 +60,6 @@ if today:
         more metrics for eval, 
         optimization,
         allow user select 
+        no major roads, geocoding
 else:
     do more

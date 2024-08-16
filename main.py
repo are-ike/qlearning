@@ -1,10 +1,11 @@
 import numpy as np
 import random
-from environment import QlearningEnv
+#from environment import QlearningEnv
 import pygame
+from traffic import Traffic
 
-map_width = 4000
-map_height = 4000
+map_width = 20000
+map_height = 20000
 
 map = pygame.Surface((map_width,map_height))
 
@@ -32,7 +33,7 @@ for dist in distances:
     distance_matrix[i][j] = k
 
 #distance_matrix = [[0,400,0,0,0,0], [400,0,400,0,0,0], [0,400,0,700,0,400], [0,0,700,0,400,0], [0,0,0,400,0,700], [0,0,400,0,700,0]]
-env = QlearningEnv(distance_matrix, carpark_idxs, map)
+#env = QlearningEnv(distance_matrix, carpark_idxs, map)
 
 #Q-Learning
 
@@ -49,36 +50,38 @@ gamma = 0.6
 epsilon = 0.5
 
 
-def train():
-    for _ in range(100):
+# def train():
+#     for _ in range(100):
         
-        state = env.reset()
-        done = False
+#         state = env.reset()
+#         done = False
         
-        while not done:
-            if random.uniform(0, 1) < epsilon:
-                action = env.action_sample()
-            else:
-                action = np.argmax(q_table[state])
+#         while not done:
+#             if random.uniform(0, 1) < epsilon:
+#                 action = env.action_sample()
+#             else:
+#                 action = np.argmax(q_table[state])
 
-            next_state, reward, done = env.step(action)
-            #print(state, action, next_state, reward, done)
+#             next_state, reward, done = env.step(action)
+#             #print(state, action, next_state, reward, done)
 
-            old_value = q_table[state][action]
-            next_max = np.max(q_table[next_state])
+#             old_value = q_table[state][action]
+#             next_max = np.max(q_table[next_state])
 
-            new_value = (1 - alpha) * old_value + alpha * (reward + gamma * next_max)
-            q_table[state][action] = new_value
+#             new_value = (1 - alpha) * old_value + alpha * (reward + gamma * next_max)
+#             q_table[state][action] = new_value
 
-            state = next_state
+#             state = next_state
 
-    return q_table
+#     return q_table
 
-table = train()
-print(table)
+#table = train()
+#print(table)
 
 
-
+traffic = Traffic([[0, 0, 0],[0, 0, 0],[0, 0, 0]], lambda x : "o",  lambda x : "o", map, (0,1))
+traffic.start_simulation()
+traffic.run_simulation()
 
 
 

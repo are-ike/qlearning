@@ -93,3 +93,178 @@ def draw_item(img_src, scale, angle=0):
         #     car.start(self.map)
             #for _  in range(100): continue
             #pygame.time.delay(2000)
+
+   # edges = [
+#     {
+#         , 
+#         "direction": "right",
+#         "length": 400,
+#         
+#         
+#     },
+#     {
+#         "position": (747,197), 
+#         "direction": "right",
+#         "length": 300,
+#         "edges": [(1,0), (0,1)],
+#         "left": 1,
+#         "right": 0,
+#         "down": None,
+#         "up": None,
+#     },
+#     # {
+#     #     "position": (500,350), 
+#     #     "direction": "down",
+#     #     "length": 500,
+#     #     "edges": [(1,4)],
+#     #     "left": None,
+#     #     "right": None,
+#     #     "down": 4,
+#     #     "up": 1,
+#     # },
+#     ]
+
+
+# roads = [
+#     {
+#         "edges": [
+#             {
+#                 "from_node": 0,
+#                 "to_node": 1,
+#                 "direction": "down"
+#             },
+#             {
+#                 "from_node": 1,
+#                 "to_node": 0,
+#                 "direction": "up"
+#             },
+#         ],
+#         "coordinates": (790,330,120,400),
+#         "one_way": False
+#     },
+#     {
+#         "edges": [
+#             {
+#                 "from_node": 1,
+#                 "to_node": 2,
+#                 "direction": "down"
+#             },
+#             {
+#                 "from_node": 2,
+#                 "to_node": 1,
+#                 "direction": "up"
+#             },
+#         ],
+#         "coordinates": (790,730,120,400),
+#         "one_way": False
+#     },
+#     {
+#         "edges": [
+#             {
+#                 "from_node": 2,
+#                 "to_node": 3,
+#                 "direction": "left"
+#             },
+#             {
+#                 "from_node": 3,
+#                 "to_node": 2,
+#                 "direction": "right"
+#             },
+#         ],
+#         "coordinates": (90,1130,700,120),
+#         "one_way": True
+#     },
+#     {
+#         "edges": [
+#             {
+#                 "from_node": 2,
+#                 "to_node": 5,
+#                 "direction": "down"
+#             },
+#             {
+#                 "from_node": 5,
+#                 "to_node": 2,
+#                 "direction": "up"
+#             },
+#         ],
+#         "coordinates": (790,1250,120,400),
+#         "one_way": False
+#     },
+#     {
+#         "edges": [
+#             {
+#                 "from_node": 3,
+#                 "to_node": 4,
+#                 "direction": "down"
+#             },
+#             {
+#                 "from_node": 4,
+#                 "to_node": 3,
+#                 "direction": "up"
+#             },
+#         ],
+#         "coordinates": (0,1250,120,400),
+#         "one_way": False
+#     },
+#     {
+#         "edges": [
+#             {
+#                 "from_node": 4,
+#                 "to_node": 5,
+#                 "direction": "right"
+#             },
+#             {
+#                 "from_node": 5,
+#                 "to_node": 4,
+#                 "direction": "left"
+#             },
+#         ],
+#         "coordinates": (90,1650,700,120),
+#         "one_way": False
+#     },
+# ]
+
+# roundabouts = [
+#     {
+#         "position": pos(850,270),
+        
+#     }
+# ]
+
+# green = [
+#     {
+#         "position": pos(130,130),
+#         "size": siz(240,140),
+#     },
+#     {
+#         "position": pos(220,270),
+#         "size": siz(60,500),
+#     },
+#     {
+#         "position": pos(50,270),
+#         "size": siz(60,500),
+#     },
+# ]
+
+# misc = [
+#     {
+#         "position": pos(80,80),
+#         "size": siz(240,140),
+#     },
+#     {
+#         "position": pos(170,220),
+#         "size": siz(60,500),
+#     },
+# ]
+
+
+
+
+
+
+            
+
+
+
+
+

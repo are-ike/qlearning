@@ -58,35 +58,35 @@ class Traffic:
             new_road =  Road(road["coordinates"], road["edges"])
             new_road.draw(self.map) #Drawing road here so that cars have access to road rect before loop
             
-            for j,edge in enumerate(road["edges"]):
-                traffic = self.traffic_matrix[edge["from_node"]][edge["to_node"]]
+            # for j,edge in enumerate(road["edges"]):
+            #     traffic = self.traffic_matrix[edge["from_node"]][edge["to_node"]]
 
-                for k in range(traffic):
-                    new_car = None
-                    id = f"{i}{j}{k}"
+            #     for k in range(traffic):
+            #         new_car = None
+            #         id = f"{i}{j}{k}"
 
-                    if self.agent_position[0] == edge["from_node"] and self.agent_position[1] == edge["to_node"]:
-                        agent = Agent(self.map, edge["from_node"], edge["to_node"], edge["direction"], new_road)
-                        self.agent = agent
-                        agent_group.add(agent)
-                    else:
-                        new_car = Car(self.map, edge["from_node"], edge["to_node"], edge["direction"], new_road)
-                        new_car.update_traffic = self.update_traffic
-                        new_car.get_traffic = self.get_traffic
+            #         if self.agent_position[0] == edge["from_node"] and self.agent_position[1] == edge["to_node"]:
+            #             agent = Agent(self.map, edge["from_node"], edge["to_node"], edge["direction"], new_road)
+            #             self.agent = agent
+            #             agent_group.add(agent)
+            #         else:
+            #             new_car = Car(self.map, edge["from_node"], edge["to_node"], edge["direction"], new_road)
+            #             new_car.update_traffic = self.update_traffic
+            #             new_car.get_traffic = self.get_traffic
 
-                        self.cars.append(new_car)
-                        car_group.add(new_car)
+            #             self.cars.append(new_car)
+            #             car_group.add(new_car)
 
             self.roads.append(new_road)
             road_group.add(new_road)
     
-        self.agent.roads = self.roads
+        # self.agent.roads = self.roads
         
-        #add all roads to Car
-        Car.set_roads(self.roads)
-        Car.set_cars(self.cars)
-        Car.set_agent(self.agent)
-        #Car.set_carparks(self.carparks)
+        # #add all roads to Car
+        # Car.set_roads(self.roads)
+        # Car.set_cars(self.cars)
+        # Car.set_agent(self.agent)
+     
         
         
 
