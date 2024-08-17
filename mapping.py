@@ -72,10 +72,44 @@ roads = [
         "coordinates": (2770,1202,875,120),
         "one_way": True
     },
-    {#dli roundabout to second gate√
+    {#dli roundabout to carpark entrance 1√
         "edges": [
             {
                 "from_node": 8,
+                "to_node": 61,
+                "direction": "right"
+            },
+            # {
+            #     "from_node": 2,
+            #     "to_node": 1,
+            #     "direction": "up"
+            # },
+        ],
+        "length": 48.60, 
+        #"coordinates": (2770,1350,875,120),
+        "one_way": True
+    },
+    {#carpark entrance 1 to carpark entrance 2√
+        "edges": [
+            {
+                "from_node": 61,
+                "to_node": 62,
+                "direction": "right"
+            },
+            # {
+            #     "from_node": 2,
+            #     "to_node": 1,
+            #     "direction": "up"
+            # },
+        ],
+        "length": 146.25, 
+        #"coordinates": (2770,1350,875,120),
+        "one_way": True
+    },
+    {#carpark entrance 2 to second gate√
+        "edges": [
+            {
+                "from_node": 62,
                 "to_node": 9,
                 "direction": "right"
             },
@@ -85,11 +119,44 @@ roads = [
             #     "direction": "up"
             # },
         ],
-        "length": 292.30, 
-        "coordinates": (2770,1350,875,120),
+        "length": 134.62, 
+        #"coordinates": (2770,1350,875,120),
         "one_way": True
     },
-
+    {#carpark entrance 1 to carpark√
+        "edges": [
+            {
+                "from_node": 61,
+                "to_node": 63,
+                "direction": "down"
+            },
+            # {
+            #     "from_node": 2,
+            #     "to_node": 1,
+            #     "direction": "up"
+            # },
+        ],
+        "length": 1, 
+        #"coordinates": (2770,1350,875,120),
+        "one_way": True
+    },
+    {#carpark entrance 2 to carpark√
+        "edges": [
+            {
+                "from_node": 62,
+                "to_node": 64,
+                "direction": "down"
+            },
+            # {
+            #     "from_node": 2,
+            #     "to_node": 1,
+            #     "direction": "up"
+            # },
+        ],
+        "length": 6.36, 
+        #"coordinates": (2770,1350,875,120),
+        "one_way": True
+    },
 
 
     {#dli roundabout (actual) towards fss√
