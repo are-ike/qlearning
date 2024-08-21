@@ -17,6 +17,16 @@ def draw_item(img_src, scale, angle=0):
     
     return draw
 
+def copy_list(list, zero=True):
+    new_list = {}
+    for key, value in list.items():
+        new_sub_list = {}
+        for key2, val in value.items():
+            new_sub_list[key2] = 0 if zero else val
+        new_list[key] = new_sub_list
+
+    return new_list
+
 # def get_img(type):
 #             if(type == 1): return 'images/build1.png'
 #             if(type == 2): return 'images/build2.png'

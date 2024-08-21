@@ -1,0 +1,65 @@
+Assumed speed of cars = 24km/h (400m/min) 6.94m/s
+-slowing down time with traffic and increasing speed 
+
+---
+test and train on light medium and heavy traffic
+introduce surges and decreases in testing
+random agent position
+----
+environment variations: traffic
+cross-validation
+---
+all metrics
+----
+hyperparameter tuning
+----
+agent going out of bounds
+---
+decay
+
+
+To do
+-select to node before car movement bad? does it affect calculation of traffic and cause subseq cars adding to reward
+-random agent position
+-track time
+-evaluation metrics
+-test with full traffic
+
+
+
+Friday
+-build campus
+-distances
+-roundabout and u turns
+
+
+
+Saturday
+
+-generate, test and train on light medium and heavy traffic
+-introduce surges and decreases in testing
+-hyperparameter tuning
+-decay
+-select start node
+-label buildings
+
+
+
+Next week
+-stop jumping of cars when straight
+-turn car back for agent and car
+-dont go back for cars
+-prevent collisions- agent colliding
+-cleanup
+
+-call to schedule
+if today:
+    patches, lines, park indicator
+    say:finish campus, 
+        add more variety to training, 
+        more metrics for eval, 
+        optimization,
+        allow user select 
+        no major roads, geocoding
+else:
+    do more

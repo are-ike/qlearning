@@ -281,7 +281,7 @@ roads = [
             #     "direction": "up"
             # },
         ],
-        "length": 302.64, #
+        "length": 300.00, #
         "coordinates": (2500,1622,120,900),
         "one_way": True
     },
@@ -392,6 +392,23 @@ roads = [
         "edges": [
             {
                 "from_node": 5,
+                "to_node": 96,
+                "direction": "down"
+            },
+            # {
+            #     "from_node": 2,
+            #     "to_node": 1,
+            #     "direction": "up"
+            # },
+        ],
+        "length": 32.28, #
+        #"coordinates": (2500,2522,120,810),
+        "one_way": True
+    },
+    {#publishing center to uturn 3
+        "edges": [
+            {
+                "from_node": 96,
                 "to_node": 12,
                 "direction": "down"
             },
@@ -401,8 +418,8 @@ roads = [
             #     "direction": "up"
             # },
         ],
-        "length": 269.05, #
-        "coordinates": (2500,2522,120,810),
+        "length": 240.73, #
+        #"coordinates": (2500,2522,120,810),
         "one_way": True
     },
     {#uturn 3 to uturn 2
@@ -525,10 +542,27 @@ roads = [
         "coordinates": (2770,3882,135,120),
         "one_way": True
     },
-    {#mosque lot to chapel lot
+    {#mosque lot to mosque lot
         "edges": [
             {
                 "from_node": 18,
+                "to_node": 86,
+                "direction": "right"
+            },
+            # {
+            #     "from_node": 2,
+            #     "to_node": 1,
+            #     "direction": "up"
+            # },
+        ],
+        "length": 88.24, #
+       # "coordinates": (2905,3882,350,120),
+        "one_way": True
+    },
+    {#mosque lot to chapel lot
+        "edges": [
+            {
+                "from_node": 86,
                 "to_node": 19,
                 "direction": "right"
             },
@@ -538,8 +572,8 @@ roads = [
             #     "direction": "up"
             # },
         ],
-        "length": 116.49, #
-        "coordinates": (2905,3882,350,120),
+        "length": 25.84, #
+        #"coordinates": (2905,3882,350,120),
         "one_way": True
     },
     {#chapel lot to parking lot
