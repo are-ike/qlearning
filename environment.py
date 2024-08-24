@@ -3,7 +3,11 @@ import numpy as np
 from gymnasium.spaces import Box, Dict
 from traffic import Traffic
 from utils import copy_list
+from routes import routes, freq
 
+traffic_count ={
+    'light': range(20,31), 'medium': range(30,46), 'heavy': range(45, 71)
+}
 class QlearningEnv(gymnasium.Env):
     def __init__(self, distances, carparks, map):
         super(QlearningEnv, self).__init__()
@@ -26,14 +30,19 @@ class QlearningEnv(gymnasium.Env):
         self.traffic_obj = None
         self.agent_is_moving = False
         self.visited = {}
+        self.distance_traveled = 0
+        self.cars_seen = 0
         self.map = map
+        self.cars = []
+        self.avail_carparks = []
 
     def step(self, action): 
         #self.traffic_obj.start_agent(self.agent_position, action)
         distance = self.distances[self.agent_position][action]
         traffic = self.traffic_matrix[self.agent_position][action]
 
-        reward = - (distance/10) - (11*traffic)
+        self.distance_traveled += distance
+        self.cars_seen += traffic
 
         self.agent_position = action
         if self.agent_position in self.visited.keys(): 
@@ -46,21 +55,35 @@ class QlearningEnv(gymnasium.Env):
         terminated = action in self.avail_carparks
         leaving = action not in self.distances.keys()
 
-        if terminated: reward += 500
-        if leaving: reward -= 1000
-        if action in self.carparks and not terminated: reward -= 100
-        reward -= (self.visited[self.agent_position] - 1) * 100
+        norm_dist = -10*((self.distance_traveled/700)**2)
+        norm_traf = -10*((self.cars_seen/10)**2)
+
+        reward = norm_dist + norm_traf
+
+        if terminated: reward += 1000
+        if leaving: reward -= 500
+        if action in self.carparks and not terminated: reward += 100
+        reward -= (self.visited[self.agent_position] - 1) * 5
 
         return action, reward, terminated, leaving, distance, traffic, self.visited
         
 
-    def reset(self, seed=None, options=None): 
+    def reset(self, episode, episodes, seed=None, options=None): 
         if not options:
             super().reset(seed=seed)
             total_cars = self.generate_traffic()
-            self.avail_carparks = self.np_random.choice(self.carparks, size=self.np_random.choice(range(3, len(self.carparks) + 1)), replace=False)
+            #self.update_traffic2()
+
+            if episode <= episodes * 0.7:
+                self.avail_carparks = self.carparks
+            else:
+                self.avail_carparks = self.np_random.choice(self.carparks, size=self.np_random.choice(range(3, len(self.carparks) + 1)), replace=False)
+
             position = self.get_agent_start_position()
             self.agent_position = position[0]
+            self.distance_traveled = 0
+            self.cars_seen = 0
+            self.visited = {}
             self.visited[self.agent_position] = 1
         else:
             super().reset(seed=seed)
@@ -165,6 +188,29 @@ class QlearningEnv(gymnasium.Env):
         self.traffic_matrix = traffic
         return total
     
+    def generate_traffic2(self, choice=None):
+        if not choice: choice = self.np_random.choice(['light', 'medium', 'heavy'])
+        
+        traffic = copy_list(self.distances)
+        total = 0
+
+        def get_route():
+            type = self.np_random.choice(['high', 'med', 'low', 'avg'], p=[0.5,0.3,0.1,0.1])
+            idx = self.np_random.choice(range(len(freq[type])))
+            subset = freq[type][idx]
+            options = [r for r in routes if set(subset).issubset(set(r))]
+            idx = self.np_random.choice(range(len(options)))
+            return options[idx]
+                                  
+
+        total = self.np_random.choice(traffic_count[choice])
+        cars = [Car(get_route(), self.get_traffic, self.set_traffic, update_int=np.random.randint(0, 5)) for _ in range(total)]
+
+        self.traffic_matrix = traffic
+        self.cars = cars
+        return total
+
+
     def get_traffic(self):
         return self.traffic_matrix
     
@@ -209,10 +255,40 @@ class QlearningEnv(gymnasium.Env):
                         else:
                             self.traffic_matrix[key][key2] -= val2
 
-
+    def update_traffic2(self):
+        for car in self.cars:
+            car.update()
                         
 
 
+class Car:
+    def __init__(self, route, get_traffic, set_traffic, update_int):
+        self.route = route
+        self.position = 0
+        self.get_traffic = get_traffic
+        self.set_traffic = set_traffic
+        self.update_count = 0
+        self.update_int = update_int
+        #print(update_int, route)
+
+    def update(self):
+        if len(self.route) - 1 == self.position: return
+        if self.update_count < self.update_int:
+            self.update_count +=1
+            return
+        
+        traffic = self.get_traffic() 
+        i = self.route[self.position]
+        if self.position > 0:
+            k = self.route[self.position - 1]
+            traffic[k][i] -= 1
+
+        self.position +=1
+        j = self.route[self.position]
+        #print(i,j)
+        traffic[i][j] += 1
+        self.set_traffic(traffic)
+        #self.update_count = 0
 
 
 

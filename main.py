@@ -6,6 +6,7 @@ from environment import QlearningEnv
 from utils import copy_list
 import copy
 import pickle
+import math
 
 # map_width = 20000
 # map_height = 20000
@@ -114,6 +115,10 @@ distances = {
     102: {84: 223.24},
 }
 
+coordinates = {
+
+}
+
 #carpark_idxs = [26,27,35,53,57,59,63,64,65,66,67,68,70,79,86,87,88,89,90,91,94,95]
 carpark_idxs = [0,26,27,35,38,53,57,59,63,65,66,67,68,70,79,87,88,90,91,94,95,97,98,100,101]
 
@@ -146,14 +151,13 @@ def train(episodes, alpha, gamma, q_table, decay_rate=decay_rate):
     eps_to_convergence = episodes
     successful_episodes = 0
     
-
     for episode in range(1, episodes + 1):
         prev_q_table = copy.deepcopy(q_table) 
         deadend = False
         #Decay epsilon
         epsilon = min_epsilon + (max_epsilon - min_epsilon)*np.exp(-decay_rate*episode)
         
-        state, init_cars, avail_parks = env.reset()
+        state, init_cars, avail_parks = env.reset(episode, episodes)
         done = False
         
         while not done:
@@ -181,13 +185,13 @@ def train(episodes, alpha, gamma, q_table, decay_rate=decay_rate):
             q_table[state][action] = new_value
 
             state = next_state
-           
+          
         
         total_cars += init_cars
 
         if not deadend: 
             successful_episodes += 1
-
+        
         if convergence(prev_q_table, q_table) and not has_converged:
             has_converged = True
             eps_to_convergence = episode
@@ -247,7 +251,10 @@ def convergence(prev_table, curr_table):
     highest_con = 0
     for key, value in prev_table.items():
         for key2, _ in value.items():
-            diff = abs(prev_table[key][key2] - curr_table[key][key2])
+            if math.isinf(prev_table[key][key2]) and math.isinf(curr_table[key][key2]):
+                diff = 0
+            else:
+                diff = abs(prev_table[key][key2] - curr_table[key][key2])
             if diff > highest_con:
                 highest_con = diff
 
@@ -255,12 +262,12 @@ def convergence(prev_table, curr_table):
         return True
     return False
 
-# q_table = copy_list(distances)
-# q_table[9] = {0: 0}
-# q_table[72] = {0: 0}
+q_table = copy_list(distances)
+q_table[9] = {0: -np.inf}
+q_table[72] = {0: -np.inf}
 
-# result = train(alpha=0.1, gamma=0.6, q_table=q_table, episodes=1)
-# calc_metrics(result)
+result = train(alpha=0.7, gamma=0.6, q_table=q_table, episodes=10000)
+calc_metrics(result)
 
 
 
@@ -277,8 +284,8 @@ def tune():
     for rate in learning_rates:
         for disc in discount_factors:
             q_table = copy_list(distances)
-            q_table[9] = {0: 0}
-            q_table[72] = {0: 0}
+            q_table[9] = {0: -np.inf}
+            q_table[72] = {0: -np.inf}
 
             result = train(alpha=rate, gamma=disc, q_table=q_table, episodes=episodes)
 
@@ -288,7 +295,8 @@ def tune():
 
             print(f"{rate} {disc} \n -------------------------- \n")
             calc_metrics(result)
-tune()
+
+#tune()
 def random_carparks():
     return np.random.choice(carpark_idxs, size=np.random.choice(range(3, len(carpark_idxs) + 1)), replace=False)
 
@@ -313,4 +321,38 @@ def generate_scenarios(cs, times):
                 options.append(option)
 
 
-    
+# env.generate_traffic2()
+# env.update_taffic2()
+# env.update_taffic2()
+# env.update_taffic2()
+# env.update_taffic2()
+# env.update_taffic2()
+# env.update_taffic2()
+# env.update_taffic2()
+# env.update_taffic2()
+# env.update_taffic2()
+# env.update_taffic2()
+# env.update_taffic2()
+# env.update_taffic2()
+# env.update_taffic2()
+# print(env.traffic_matrix)
+# env.update_taffic2()
+# print(env.traffic_matrix)
+
+# env.agent_position = 1
+# env.visited[1] = 1
+# env.traffic_matrix = copy_list(distances)
+# stuff = env.step(2)
+# print(stuff)
+# env.agent_position = 2
+# stuff = env.step(1)
+# print(stuff)
+# env.agent_position = 1
+# stuff = env.step(2)
+# print(stuff)
+# env.agent_position = 2
+# stuff = env.step(1)
+# print(stuff)
+
+
+
