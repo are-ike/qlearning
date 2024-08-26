@@ -7,6 +7,8 @@ from utils import copy_list
 import copy
 import pickle
 import math
+import time
+from routes import hotspots
 
 # map_width = 20000
 # map_height = 20000
@@ -131,7 +133,7 @@ def maxa(dict):
 
 #Q-Learning
 
-env = QlearningEnv(distances, carpark_idxs, map)
+env = QlearningEnv(distances, carpark_idxs, hotspots.keys(), map)
 
 # #Hyperparameters
 max_epsilon = 1.0           
@@ -262,12 +264,14 @@ def convergence(prev_table, curr_table):
         return True
     return False
 
-q_table = copy_list(distances)
-q_table[9] = {0: -np.inf}
-q_table[72] = {0: -np.inf}
+# q_table = copy_list(distances)
+# q_table[9] = {0: -np.inf}
+# q_table[72] = {0: -np.inf}
 
-result = train(alpha=0.7, gamma=0.6, q_table=q_table, episodes=10000)
-calc_metrics(result)
+# start_time = time.time()
+# result = train(alpha=0.7, gamma=0.6, q_table=q_table, episodes=10000)
+# calc_metrics(result)
+# end_time = time.time()
 
 
 
@@ -295,21 +299,26 @@ def tune():
 
             print(f"{rate} {disc} \n -------------------------- \n")
             calc_metrics(result)
-
+#start_time = time.time()
 #tune()
+#end_time = time.time()
+#print(start_time,end_time, end_time - start_time)
+
 def random_carparks():
     return np.random.choice(carpark_idxs, size=np.random.choice(range(3, len(carpark_idxs) + 1)), replace=False)
 
-def generate_scenarios(cs, times):
+start_pos = [pos for pos in distances.keys() if pos not in carpark_idxs]
+
+#carpark_scenarios =[[88,90,91,94,95], [0,26,27,35], [53,57,59,63,95], [88,66], [26,43,90,0,70,35]]
+def generate_scenarios():
     options = []
-    carpark_scenarios =[[27, 35, 38, 53, 90], [63, 64, 87, 26], [87,  91], [35, 64], [0, 59, 95, 57, 63, 64, 26, 27]]
-    carpark_scenarios =[[88,90,91,94,95], [0,26,27,35], [53,57,59,63,95], [88,66], [26,43,90,0,70,35]]
+    carpark_scenarios =[[27, 35, 38, 53, 90], [63, 65, 87, 26], [87,  91], [35, 59], [0, 59, 95, 57, 63, 65, 26, 27]]
     carpark_scenarios.append(random_carparks())
     carpark_scenarios.append(random_carparks())
 
     traffic_scenarios = ["light", "medium", "heavy"]
 
-    for node in [pos for pos in distances.keys() if pos not in carpark_idxs]:
+    for node in start_pos:
         for traffic in traffic_scenarios:
             for carpark in carpark_scenarios:
                 option = {
@@ -319,9 +328,96 @@ def generate_scenarios(cs, times):
                 }
 
                 options.append(option)
+    
+    return options
 
+options = generate_scenarios()
 
-# env.generate_traffic2()
+def train2(episodes,q_table):
+    rewards = 0
+    timesteps = 0
+    distance_travelled = 0
+    total_cars = 0
+    cars_seen = 0
+    successful_episodes = 0
+    
+    for episode in range(1, episodes + 1):
+        
+        deadend = False
+        done = False
+       
+        state, init_cars, avail_parks = env.reset(episode, episodes, options=options[episode - 1])
+        print(options[episode - 1])
+        while not done:
+            action = argmax(q_table[state])
+
+            next_state, reward, done, deadend, distance, cars, visited = env.step(action) 
+            print(next_state, reward)
+
+            #metrics
+            rewards += reward
+            timesteps += 1
+            distance_travelled += distance
+            cars_seen += cars
+
+            if deadend: 
+                done = True
+
+            state = next_state
+          
+        
+        total_cars += init_cars
+
+        if not deadend: 
+            successful_episodes += 1
+
+    return (
+        rewards, 
+        timesteps, 
+        distance_travelled, 
+        cars_seen, 
+        total_cars,
+        successful_episodes,
+        episodes)
+
+def calc_metrics2(metrics):
+    rewards, timesteps, distance_travelled, cars_seen, total_cars, successful_episodes, episodes = metrics
+    avg_reward = rewards / episodes
+    avg_timesteps = timesteps / episodes
+    avg_distance = distance_travelled / episodes
+    cars_perc = (cars_seen / total_cars) * 100
+    success_rate = (successful_episodes / episodes) * 100
+
+    print('\n\n ================================================')
+    print(
+        f"Episodes: {episodes} \n" +
+        f"Average Reward per Episode: {avg_reward} \n" +  
+        f"Average Timesteps per Episode: {avg_timesteps} \n" + 
+        f"Average Distance Traveled per Episode: {avg_distance} \n" + 
+        f"Percentage of Cars Encountered: {cars_perc} \n" +
+        f"Number of Cars Encountered: {cars_seen} \n" +
+        f"Number of Cars: {total_cars} \n" +
+        f"Success Rate: {success_rate} \n" 
+        )
+
+def evall():
+    episodes = len(start_pos)
+    num = 9
+    # for rate in learning_rates:
+    #     for disc in discount_factors:
+
+    with open(f'q_table{num}.pkl', 'rb') as file:
+        data = pickle.load(file)
+
+    result = train2(q_table=data, episodes=1)
+    
+    num+= 1
+
+    #print(f"{rate} {disc} \n -------------------------- \n")
+    calc_metrics2(result)
+
+#evall()
+#env.generate_traffic3()
 # env.update_taffic2()
 # env.update_taffic2()
 # env.update_taffic2()
@@ -336,7 +432,13 @@ def generate_scenarios(cs, times):
 # env.update_taffic2()
 # env.update_taffic2()
 # print(env.traffic_matrix)
-# env.update_taffic2()
+# env.update_traffic3()
+# print(env.traffic_matrix)
+# env.update_traffic3()
+# print(env.traffic_matrix)
+# env.update_traffic3()
+# print(env.traffic_matrix)
+# env.update_traffic3()
 # print(env.traffic_matrix)
 
 # env.agent_position = 1

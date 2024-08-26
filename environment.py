@@ -9,7 +9,7 @@ traffic_count ={
     'light': range(20,31), 'medium': range(30,46), 'heavy': range(45, 71)
 }
 class QlearningEnv(gymnasium.Env):
-    def __init__(self, distances, carparks, map):
+    def __init__(self, distances, carparks, hotspots, map):
         super(QlearningEnv, self).__init__()
 
         self.size =9
@@ -33,6 +33,7 @@ class QlearningEnv(gymnasium.Env):
         self.distance_traveled = 0
         self.cars_seen = 0
         self.map = map
+        self.hotspots = hotspots
         self.cars = []
         self.avail_carparks = []
 
@@ -50,7 +51,7 @@ class QlearningEnv(gymnasium.Env):
         else:
             self.visited[self.agent_position] = 1 
 
-        self.update_traffic()
+        self.update_traffic3()
 
         terminated = action in self.avail_carparks
         leaving = action not in self.distances.keys()
@@ -71,7 +72,7 @@ class QlearningEnv(gymnasium.Env):
     def reset(self, episode, episodes, seed=None, options=None): 
         if not options:
             super().reset(seed=seed)
-            total_cars = self.generate_traffic()
+            total_cars = self.generate_traffic3()
             #self.update_traffic2()
 
             if episode <= episodes * 0.7:
@@ -87,9 +88,12 @@ class QlearningEnv(gymnasium.Env):
             self.visited[self.agent_position] = 1
         else:
             super().reset(seed=seed)
-            total_cars = self.generate_traffic(choice=options["traffic"])
+            total_cars = self.generate_traffic3(choice=options["traffic"])
             self.avail_carparks = options["carparks"]
             #position = options["start"]
+            self.distance_traveled = 0
+            self.cars_seen = 0
+            self.visited = {}
             self.agent_position = options["start"]
             self.visited[self.agent_position] = 1
 
@@ -119,13 +123,21 @@ class QlearningEnv(gymnasium.Env):
         return self.np_random.choice(options)
     
     def get_agent_start_position(self):
-        i_options = [pos for pos in self.distances.keys() if pos not in self.carparks]
+        # i_options = [pos for pos in self.distances.keys() if pos not in self.carparks]
+        # i = self.np_random.choice(i_options)
+        # j_options = [pos for pos in self.distances[i].keys() if pos not in self.carparks]
+
+        # while not j_options:
+        #     i = self.np_random.choice(i_options)
+        #     j_options = [pos for pos in self.distances[i].keys() if pos not in self.carparks]
+        # j = self.np_random.choice(j_options)
+        i_options = [pos for pos in self.distances.keys()]
         i = self.np_random.choice(i_options)
-        j_options = [pos for pos in self.distances[i].keys() if pos not in self.carparks]
+        j_options = [pos for pos in self.distances[i].keys()]
 
         while not j_options:
             i = self.np_random.choice(i_options)
-            j_options = [pos for pos in self.distances[i].keys() if pos not in self.carparks]
+            j_options = [pos for pos in self.distances[i].keys()]
         j = self.np_random.choice(j_options)
 
         return (i,j)
@@ -209,6 +221,79 @@ class QlearningEnv(gymnasium.Env):
         self.traffic_matrix = traffic
         self.cars = cars
         return total
+
+    def calc_traff(self, dist, choice,edge):
+        prob = self.np_random.uniform(0,1)
+
+        if choice == 'light':
+            if edge in self.hotspots: return self.np_random.choice([1,2])
+            if prob < 0.05:
+                if dist > 100: return self.np_random.choice([1,2])
+                if dist > 10: return self.np_random.choice([0,1]) 
+            return 0
+
+        else:
+            if edge in self.hotspots: 
+                #if dist <= 150 and dist >= 50: return self.np_random.choice([2,3])
+                if dist > 150: return self.np_random.choice([2,3]) 
+                return self.np_random.choice([1,2]) 
+            if (prob < 0.07 and choice == 'medium') or (prob < 0.09 and choice == 'heavy'):
+                if dist > 100: return self.np_random.choice([1,2])
+                if dist > 10: return self.np_random.choice([0,1])
+                return 1 
+            return 0
+        
+        # if choice == 'heavy':
+        #     if edge in self.hotspots: 
+        #         if dist <= 150 and dist >= 50: return 3
+        #         if dist > 150: return self.np_random.choice([4,5]) 
+        #         return self.np_random.choice([1,2]) 
+        #     if dist > 100: return self.np_random.choice([1,2,3])
+        #     if dist > 10: return self.np_random.choice([0,1]) 
+        #     return 1
+            
+    def generate_traffic3(self, choice=None):
+        if not choice: choice = self.np_random.choice(['light', 'medium', 'heavy'])
+        traffic = copy_list(self.distances)
+        total = 0
+        
+
+        flat_edges = [(start, end) for start, destinations in self.distances.items() for end in destinations]
+        distances = np.array([self.distances[start][end] for start, end in flat_edges])
+
+        for (start, end), dist in zip(flat_edges, distances):
+            val = self.calc_traff(dist, choice, (start, end))
+            traffic[start][end] = val
+            total += val
+           
+        self.traffic_matrix = traffic
+        return total
+
+    def update_traffic3(self):
+        flat_edges = [(start, end) for start, destinations in self.traffic_matrix.items() for end in destinations]
+        new_matrix = copy_list(self.traffic_matrix)
+
+        for edge in flat_edges:
+            change = self.np_random.choice(range(0,6))
+            num = change if change <= self.traffic_matrix[edge[0]][edge[1]] else self.traffic_matrix[edge[0]][edge[1]]
+            
+            for _ in range(num):
+                if edge[1] in self.traffic_matrix.keys():
+                    options = list(self.traffic_matrix[edge[1]].keys())
+                    hotspots = [x for x in options if (edge[1], x) in self.hotspots]
+                    
+                    prob = list(map(lambda x : 1/(len(options) + len(hotspots)) if (edge[1], x) not in self.hotspots else 2/(len(options) + len(hotspots)), options ))
+                    to = self.np_random.choice(options, p=prob)
+                    new_matrix[edge[1]][to] += 1
+          
+            self.traffic_matrix[edge[0]][edge[1]] -= num
+
+        for edge in flat_edges:
+            add = 0
+            if edge == (10,2) or edge == (73,28): add = self.np_random.choice([0,1])
+            self.traffic_matrix[edge[0]][edge[1]] += (new_matrix[edge[0]][edge[1]] + add)
+
+
 
 
     def get_traffic(self):
