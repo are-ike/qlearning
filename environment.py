@@ -4,6 +4,7 @@ from gymnasium.spaces import Box, Dict
 from traffic import Traffic
 from utils import copy_list
 from routes import routes, freq
+from sim import TestSimulation
 
 traffic_count ={
     'light': range(20,31), 'medium': range(30,46), 'heavy': range(45, 71)
@@ -33,38 +34,47 @@ class QlearningEnv(gymnasium.Env):
         self.distance_traveled = 0
         self.cars_seen = 0
         self.map = map
+        self.sim = None
         self.hotspots = hotspots
         self.cars = []
         self.avail_carparks = []
 
     def step(self, action): 
-        #self.traffic_obj.start_agent(self.agent_position, action)
+        self.sim.agent.move(self.agent_position, action)
+
+        #while self.sim.agent.get_is_moving():
+        self.sim.run_simulation()
+
         distance = self.distances[self.agent_position][action]
         traffic = self.traffic_matrix[self.agent_position][action]
 
         self.distance_traveled += distance
         self.cars_seen += traffic
 
+        from_node = self.agent_position
         self.agent_position = action
         if self.agent_position in self.visited.keys(): 
             self.visited[self.agent_position] += 1 
         else:
             self.visited[self.agent_position] = 1 
 
-        self.update_traffic3()
+        #self.update_traffic3()
 
         terminated = action in self.avail_carparks
+        #terminated = action in self.carparks
         leaving = action not in self.distances.keys()
 
-        norm_dist = -10*((self.distance_traveled/700)**2)
-        norm_traf = -10*((self.cars_seen/10)**2)
+        norm_dist = -0.1*((self.distance_traveled/100)**2)
+        norm_traf = -0.2*((self.cars_seen)**2)
 
         reward = norm_dist + norm_traf
 
-        if terminated: reward += 1000
+        if terminated: reward += 100
         if leaving: reward -= 500
-        if action in self.carparks and not terminated: reward += 100
+        #if action in self.carparks and not terminated: reward += 10
         reward -= (self.visited[self.agent_position] - 1) * 5
+
+        #print(self.traffic_matrix)
 
         return action, reward, terminated, leaving, distance, traffic, self.visited
         
@@ -75,12 +85,13 @@ class QlearningEnv(gymnasium.Env):
             total_cars = self.generate_traffic3()
             #self.update_traffic2()
 
-            if episode <= episodes * 0.7:
-                self.avail_carparks = self.carparks
-            else:
-                self.avail_carparks = self.np_random.choice(self.carparks, size=self.np_random.choice(range(3, len(self.carparks) + 1)), replace=False)
+            self.avail_carparks = self.carparks
+            # if episode <= episodes * 0.7:
+            #     self.avail_carparks = self.carparks
+            # else:
+            #     self.avail_carparks = self.np_random.choice(self.carparks, size=self.np_random.choice(range(3, len(self.carparks) + 1)), replace=False)
 
-            position = self.get_agent_start_position()
+            position = (73,28)
             self.agent_position = position[0]
             self.distance_traveled = 0
             self.cars_seen = 0
@@ -88,24 +99,31 @@ class QlearningEnv(gymnasium.Env):
             self.visited[self.agent_position] = 1
         else:
             super().reset(seed=seed)
-            total_cars = self.generate_traffic3(choice=options["traffic"])
-            self.avail_carparks = options["carparks"]
+            # total_cars = self.generate_traffic3(choice=options["traffic"])
+            total_cars = self.generate_traffic3()
+            self.avail_carparks = self.carparks
+            #self.avail_carparks = options["carparks"]
             #position = options["start"]
             self.distance_traveled = 0
             self.cars_seen = 0
             self.visited = {}
-            self.agent_position = options["start"]
+            self.agent_position = options
             self.visited[self.agent_position] = 1
 
         #traffic = Traffic(self.traffic_matrix, self.get_traffic, self.set_traffic,self.map, position)
         #traffic.set_agent_is_moving = self.set_agent_is_moving
         #elf.traffic_obj = traffic
-        #print(position)
+        # print(position)
         #traffic.start_simulation()
-
-
         
-        return self.agent_position, total_cars, self.avail_carparks
+        self.start_sim(position)
+        
+        return self.agent_position, total_cars
+
+    def start_sim(self, pos):
+        self.sim = TestSimulation(traffic=self.traffic_matrix, get_traffic=self.get_traffic, set_traffic=self.set_traffic)
+        self.sim.init_simulation(pos)
+
 
     def render(self): pass
   
@@ -229,7 +247,7 @@ class QlearningEnv(gymnasium.Env):
             if edge in self.hotspots: return self.np_random.choice([1,2])
             if prob < 0.05:
                 if dist > 100: return self.np_random.choice([1,2])
-                if dist > 10: return self.np_random.choice([0,1]) 
+                if dist > 7: return self.np_random.choice([0,1]) 
             return 0
 
         else:
@@ -239,7 +257,7 @@ class QlearningEnv(gymnasium.Env):
                 return self.np_random.choice([1,2]) 
             if (prob < 0.07 and choice == 'medium') or (prob < 0.09 and choice == 'heavy'):
                 if dist > 100: return self.np_random.choice([1,2])
-                if dist > 10: return self.np_random.choice([0,1])
+                if dist > 7: return self.np_random.choice([0,1])
                 return 1 
             return 0
         
@@ -301,6 +319,7 @@ class QlearningEnv(gymnasium.Env):
     
     def set_traffic(self, new_traffic):
         self.traffic_matrix = new_traffic
+
 
     def update_traffic(self):
         prob1 = 0.6

@@ -11,9 +11,8 @@ class Agent(Car):
         self.roads = []         
 
     def move(self, from_node, to_node):
-        #self.start = True
-
-        for road in self.roads:
+        # print(from_node, to_node)
+        for road in Car.get_roads():
             for edge in road.edges:
                 if edge["from_node"] == from_node and edge["to_node"] == to_node:
                     self.from_node = from_node
@@ -24,18 +23,20 @@ class Agent(Car):
                     surf_and_rect = self.get_rect_surf()
                     self.rect = surf_and_rect[1]
                     self.image = surf_and_rect[0]
+                    
 
     def get_is_moving(self): return self.is_moving
     def get_is_start(self): return self.start
 
     def update(self):
-
         #if not self.get_is_start(): return
 
         self.is_moving = True 
+        #print(self.is_moving, 2)
         #self.set_is_moving(True)
 
         if self.has_left_road():
+            #print(self.is_moving, 3)
             #old_direction = self.direction
             #self.set_is_moving(False)
             self.is_moving = False 
@@ -45,7 +46,7 @@ class Agent(Car):
 
         x = self.position[0]
         y = self.position[1]
-        dist = 3
+        dist = 1.2
 
         if self.direction == "right": 
             new_position = (dist + x, y)

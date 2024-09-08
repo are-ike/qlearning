@@ -1,6 +1,5 @@
 import random
 import pygame
-from sprite import Sprite
 from utils import draw_item
 
 FRAMES = 60
@@ -10,14 +9,14 @@ angles = {
     "right": 180,
     "down": 270
 }
-random.seed(12)
+#random.seed(12)
 
 class Car(pygame.sprite.Sprite):
     roads = []
     cars = []
     agent = None
 
-    def __init__(self, id, from_node, to_node, direction, road, img_src='images/car.png', car_width=76, car_height=76):
+    def __init__(self, id, from_node, to_node, direction, road, img_src='images/car.png', car_width=70, car_height=70):
         pygame.sprite.Sprite.__init__(self)
         self.from_node = from_node
         self.to_node = to_node
@@ -42,6 +41,10 @@ class Car(pygame.sprite.Sprite):
         roads = rds
 
     @staticmethod
+    def get_roads():
+        return roads
+
+    @staticmethod
     def set_cars(crs):
         global cars
         cars = crs
@@ -49,7 +52,7 @@ class Car(pygame.sprite.Sprite):
     @staticmethod
     def set_agent(agt):
         global cars
-        cars.append(agt)
+        cars.add(agt)
 
     def select_to_node (self):
         road_options = []
@@ -61,10 +64,17 @@ class Car(pygame.sprite.Sprite):
                     road_options.append(road)
                     edges_options.append(edge)
     
+        if len(road_options) == 0:
+            new_traffic = self.get_traffic()
+            new_traffic[self.from_node][self.to_node] -= 1
+            self.update_traffic(new_traffic)
+            self.kill()
+            return
+
         #doable if i add more higher num roads?
         # idx = 0
         # while edges_options[idx]["to_node"] < self.to_node and len(edges_options)> 1:
-        idx = random.randint(0, len(road_options) - 1)
+        idx = 0 if len(road_options) == 1 else random.randint(0, len(road_options) - 1)
 
         new_traffic = self.get_traffic()
         new_traffic[self.from_node][self.to_node] -= 1
@@ -80,21 +90,36 @@ class Car(pygame.sprite.Sprite):
     
     def get_rect_surf(self):
         rect = self.road.rect
-        half_car_width = self.car_width - 20
-        half_car_height = self.car_height - 20
+        one_way = True if len(self.road.edges) == 1 else False
+        half_car_size = self.car_width / 2
         
         if self.direction == "right": 
             self.angle = 0
-            self.position = (rect.left, rect.bottom - half_car_height - 8)
+            self.position = (rect.left, rect.bottom - half_car_size - 20)
+            if one_way:
+                if random.randint(0, 1) == 1:
+                    self.position = (rect.left, rect.top - 15)
+
         if self.direction == "left": 
             self.angle = 180
-            self.position = (rect.right - half_car_width, rect.top - 14)
+            self.position = (rect.right - half_car_size, rect.top - 15)
+            if one_way:
+                if random.randint(0, 1) == 1:
+                    self.position = (rect.right - half_car_size, rect.bottom - half_car_size - 20)
+
         if self.direction == "up": 
             self.angle = 90
-            self.position = (rect.right - half_car_width - 8, rect.bottom - half_car_height)
+            self.position = (rect.right - half_car_size - 18, rect.bottom - half_car_size)
+            if one_way:
+                if random.randint(0, 1) == 1:
+                    self.position = (rect.left - 16, rect.bottom - half_car_size)
+
         if self.direction == "down": 
             self.angle = 270 
-            self.position = (rect.left -10 , rect.top)
+            self.position = (rect.left - 16, rect.top)
+            if one_way:
+                if random.randint(0, 1) == 1:
+                    self.position = (rect.right - half_car_size - 18, rect.top)
 
         draw_fn = draw_item(self.img_src, (self.car_width,self.car_height), self.angle) 
         surf_and_rect = draw_fn(self.position)
@@ -160,14 +185,14 @@ class Car(pygame.sprite.Sprite):
     def update(self):
         rect = None
         if self.has_left_road():
-            old_direction = self.direction
+            #old_direction = self.direction
             self.select_to_node()
             
-            if old_direction != self.direction:
+            #if old_direction != self.direction:
                #self.turn_car(old_direction)
-               rect_surf = self.get_rect_surf()
-               rect = rect_surf[1]
-               self.image = rect_surf[0]
+            rect_surf = self.get_rect_surf()
+            rect = rect_surf[1]
+            self.image = rect_surf[0]
 
 
         x = self.position[0]
@@ -189,7 +214,7 @@ class Car(pygame.sprite.Sprite):
             #     dist -= 1
             # elif dist == 0 or not self.is_colliding(new_position):
             #     break
-        if self.has_collision(new_position): return
+        #if self.has_collision(new_position): return
 
         self.position = new_position
         if rect: self.rect = rect
@@ -197,7 +222,7 @@ class Car(pygame.sprite.Sprite):
 
     def has_left_road(self):
         rect = self.road.rect
-        half_car_size = 60
+        half_car_size = 30
 
         if self.direction == "right": 
             return self.rect.right > rect.right + half_car_size
@@ -215,16 +240,17 @@ class Car(pygame.sprite.Sprite):
             return False
         
     def has_collision(self, coordinates):
+        return False
         def get_coor():
-            if self.direction == "down": return (coordinates[0], coordinates[1], self.car_width - 20, self.car_height)
-            if self.direction == "up" : return (coordinates[0] + 20, coordinates[1], self.car_width - 20, self.car_height)
-            if self.direction == "left": return (coordinates[0], coordinates[1], self.car_width, self.car_height - 20)
-            if self.direction == "right": return (coordinates[0], coordinates[1] + 20, self.car_width, self.car_height - 15)
+            if self.direction == "down": return (coordinates[0], coordinates[1], self.car_width - 40, self.car_height)
+            if self.direction == "up" : return (coordinates[0] + 40, coordinates[1], self.car_width - 40, self.car_height)
+            if self.direction == "left": return (coordinates[0], coordinates[1], self.car_width, self.car_height - 40)
+            if self.direction == "right": return (coordinates[0], coordinates[1] + 40, self.car_width, self.car_height - 40)
 
         rect = pygame.rect.Rect(get_coor())
-        sprite = Sprite(rect)
+        #sprite = Sprite(rect)
         #pygame.draw.rect(self.id,'#ffffff', pygame.Rect(rect))
-        sprites = pygame.sprite.spritecollide(sprite, cars, False)
+        sprites = None
 
         if len(sprites) == 0:
             self.is_paused = False 

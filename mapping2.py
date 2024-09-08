@@ -28,6 +28,22 @@ roads = [
     {
         "edges": [
             {
+                "from_node": 69,
+                "to_node": 70,
+                "direction": "up"
+            },
+            {
+                "from_node": 70,
+                "to_node": 69,
+                "direction": "down"
+            },
+        ],
+        "coordinates": posy(850,100,90,100),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
                 "from_node": 71,
                 "to_node": 28,
                 "direction": "down"
@@ -108,6 +124,11 @@ roads = [
                 "to_node": 78,
                 "direction": "left"
             },
+            {
+                "from_node": 78,
+                "to_node": 30,
+                "direction": "right"
+            },
         ],
         "coordinates": posy(300,460,100,90),
         "one_way": True
@@ -118,6 +139,11 @@ roads = [
                 "from_node": 78,
                 "to_node": 77,
                 "direction": "down"
+            },
+            {
+                "from_node": 77,
+                "to_node": 78,
+                "direction": "up"
             },
         ],
         "coordinates": posy(210,460,90,200),
@@ -160,6 +186,11 @@ roads = [
             {
                 "from_node": 76,
                 "to_node": 75,
+                "direction": "down"
+            },
+            {
+                "from_node": 75,
+                "to_node": 76,
                 "direction": "down"
             },
         ],
@@ -454,8 +485,8 @@ roads = [
                 "direction": "up"
             },
             {
-                "from_node": 20,
-                "to_node": 67,
+                "from_node": 67,
+                "to_node": 20,
                 "direction": "down"
             },
         ],
@@ -1075,6 +1106,11 @@ roads = [
                 "to_node": 45,
                 "direction": "up"
             },
+            {
+                "from_node": 45,
+                "to_node": 44,
+                "direction": "down"
+            },
         ],
         "coordinates": posy(5690,-690,90,300),
         "one_way": True
@@ -1086,6 +1122,11 @@ roads = [
                 "to_node": 87,
                 "direction": "left"
             },
+            {
+                "from_node": 87,
+                "to_node": 45,
+                "direction": "right"
+            },
         ],
         "coordinates": posy(5590,-690,150,90),
         "one_way": True
@@ -1095,6 +1136,11 @@ roads = [
             {
                 "from_node": 45,
                 "to_node": 88,
+                "direction": "left"
+            },
+            {
+                "from_node": 88,
+                "to_node": 45,
                 "direction": "left"
             },
         ],
@@ -1250,6 +1296,22 @@ roads = [
     {
         "edges": [
             {
+                "from_node": 92,
+                "to_node": 95,
+                "direction": "up"
+            },
+            {
+                "from_node": 95,
+                "to_node": 92,
+                "direction": "down"
+            },
+        ],
+        "coordinates": posy(4970,1050,90,100),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
                 "from_node": 57,
                 "to_node": 56,
                 "direction": "left"
@@ -1261,6 +1323,22 @@ roads = [
             },
         ],
         "coordinates": posy(5020,1150,150,90),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 95,
+                "to_node": 56,
+                "direction": "down"
+            },
+            {
+                "from_node": 56,
+                "to_node": 95,
+                "direction": "up"
+            },
+        ],
+        "coordinates": posy(5020,1050,90,100),
         "one_way": True
     },
     {
@@ -1324,7 +1402,7 @@ roads = [
                 "direction": "down"
             },
         ],
-        "coordinates": posy(4680,1600,90,200),
+        "coordinates": posy(4680,1600,90,360),
         "one_way": True
     },
     {
@@ -1340,7 +1418,7 @@ roads = [
                 "direction": "down"
             },
         ],     
-        "coordinates": posy(4280,1550,400,90),
+        "coordinates": posy(4480,1550,200,90),
         "one_way": True
     },
     {
@@ -1356,8 +1434,435 @@ roads = [
                 "direction": "up"
             },
         ],
-        "coordinates": posy(4190,1550,90,200),
+        "coordinates": posy(4390,1550,90,300),
         "one_way": True
     },
+
+    #science to dli
+    {
+        "edges": [
+            {
+                "from_node": 60,
+                "to_node": 3,
+                "direction": "left"
+            },
+        ],
+        "coordinates": posy(4480,1850,290,90),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 3,
+                "to_node": 60,
+                "direction": "right"
+            },
+        ],
+        "coordinates": posy(4480,1960,290,90),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": None,
+                "to_node": None,
+                "direction": "left"
+            },
+        ],
+        "coordinates": posy(4390,1850,90,200),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 3,
+                "to_node": 4,
+                "direction": "left"
+            },
+        ],
+        "coordinates": posy(2490,1850,1900,90),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 2,
+                "to_node": 3,
+                "direction": "right"
+            },
+        ],
+        "coordinates": posy(2490,1960,1900,90),
+        "one_way": True
+    },
+
+    #access roundabout to dli
+    {
+        "edges": [
+            {
+                "from_node": 15,
+                "to_node": 14,
+                "direction": "down"
+            },
+        ],
+        "coordinates": posy(2350,400,90,150),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 14,
+                "to_node": 15,
+                "direction": "up"
+            },
+        ],
+        "coordinates": posy(2470,400,90,150),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": None,
+                "to_node": None,
+                "direction": "up"
+            },
+        ],
+        "coordinates": posy(2350,550,210,50),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 14,
+                "to_node": 13,
+                "direction": "down"
+            },
+        ],
+        "coordinates": posy(2350,600,90,150),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 13,
+                "to_node": 14,
+                "direction": "up"
+            },
+        ],
+        "coordinates": posy(2470,600,90,150),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": None,
+                "to_node": None,
+                "direction": "up"
+            },
+        ],
+        "coordinates": posy(2350,750,210,50),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 13,
+                "to_node": 12,
+                "direction": "down"
+            },
+        ],
+        "coordinates": posy(2350,800,90,100),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 12,
+                "to_node": 13,
+                "direction": "up"
+            },
+        ],
+        "coordinates": posy(2470,800,90,100),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": None,
+                "to_node": None,
+                "direction": "up"
+            },
+        ],
+        "coordinates": posy(2350,900,210,50),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 12,
+                "to_node": 11,
+                "direction": "down"
+            },
+        ],
+        "coordinates": posy(2350,950,90,200),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 11,
+                "to_node": 98,
+                "direction": "left"
+            },
+            {
+                "from_node": 98,
+                "to_node": 11,
+                "direction": "right"
+            },
+        ],
+        "coordinates": posy(2250,1000,100,90),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 11,
+                "to_node": 5,
+                "direction": "down"
+            },
+        ],
+        "coordinates": posy(2350,1150,90,300),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 96,
+                "to_node": 12,
+                "direction": "up"
+            },
+        ],
+        "coordinates": posy(2470,950,90,300),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 5,
+                "to_node": 96,
+                "direction": "up"
+            },
+        ],
+        "coordinates": posy(2470,1250,90,200),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 96,
+                "to_node": 97,
+                "direction": "right"
+            },
+            {
+                "from_node": 97,
+                "to_node": 96,
+                "direction": "left"
+            },
+        ],
+        "coordinates": posy(2560,1200,100,90),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": None,
+                "to_node": None,
+                "direction": "up"
+            },
+        ],
+        "coordinates": posy(2350,1450,210,50),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 5,
+                "to_node": 6,
+                "direction": "down"
+            },
+        ],
+        "coordinates": posy(2350,1500,90,350),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 4,
+                "to_node": 5,
+                "direction": "up"
+            },
+        ],
+        "coordinates": posy(2470,1500,90,350),
+        "one_way": True
+    },
+
+    #dli roundabout
+    {
+        "edges": [
+            {
+                "from_node": 2,
+                "to_node": 4,
+                "direction": "up"
+            },
+        ],
+        "coordinates": posy(2470,1850,90,200),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 4,
+                "to_node": 6,
+                "direction": "left"
+            },
+        ],
+        "coordinates": posy(2350,1850,200,90),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 6,
+                "to_node": 8,
+                "direction": "down"
+            },
+        ],
+        "coordinates": posy(2350,1850,90,100),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 8,
+                "to_node": 2,
+                "direction": "down"
+            },
+        ],
+        "coordinates": posy(2350,1950,90,100),
+        "one_way": True
+    },
+
+    #second gate
+    {
+        "edges": [
+            {
+                "from_node": 10,
+                "to_node": 2,
+                "direction": "right"
+            },
+        ],
+        "coordinates": posy(1750,1960,600,90),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 8,
+                "to_node": 61,
+                "direction": "left"
+            },
+        ],
+        "coordinates": posy(2200,1850,150,90),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 61,
+                "to_node": 62,
+                "direction": "left"
+            },
+        ],
+        "coordinates": posy(1950,1850,250,90),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 61,
+                "to_node": 63,
+                "direction": "up"
+            },
+            {
+                "from_node": 63,
+                "to_node": 61,
+                "direction": "down"
+            },
+        ],
+        "coordinates": posy(2150,1750,90,100),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 62,
+                "to_node": 63,
+                "direction": "up"
+            },
+            {
+                "from_node": 63,
+                "to_node": 62,
+                "direction": "down"
+            },
+        ],
+        "coordinates": posy(1900,1750,90,100),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 62,
+                "to_node": 9,
+                "direction": "left"
+            },
+        ],
+        "coordinates": posy(1750,1850,200,90),
+        "one_way": True
+    },
+
+
+    #dli roundabout to dli
+    {
+        "edges": [
+            {
+                "from_node": 2,
+                "to_node": 1,
+                "direction": "down"
+            },
+            {
+                "from_node": 1,
+                "to_node": 2,
+                "direction": "up"
+            },
+        ],
+        "coordinates": posy(2410,2050,90,400),
+        "one_way": True
+    },
+    {
+        "edges": [
+            {
+                "from_node": 1,
+                "to_node": 0,
+                "direction": "down"
+            },
+            {
+                "from_node": 0,
+                "to_node": 1,
+                "direction": "up"
+            },
+        ],
+        "coordinates": posy(2410,2450,90,600),
+        "one_way": True
+    },
+
 ]
 
