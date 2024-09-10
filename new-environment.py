@@ -38,77 +38,53 @@ class QlearningEnv(gymnasium.Env):
         self.avail_carparks = []
 
     def step(self, action): 
-        self.sim.agent.move(self.agent_position, action)
-
-        #while self.sim.agent.get_is_moving():
-        self.sim.run_simulation()
-
         distance = self.distances[self.agent_position][action]
         traffic = self.traffic_matrix[self.agent_position][action]
 
         self.distance_traveled += distance
         self.cars_seen += traffic
 
-        from_node = self.agent_position
         self.agent_position = action
+
         if self.agent_position in self.visited.keys(): 
             self.visited[self.agent_position] += 1 
         else:
             self.visited[self.agent_position] = 1 
 
-        #self.update_traffic3()
+        self.update_traffic3()
 
-        terminated = action in self.avail_carparks
-        #terminated = action in self.carparks
+        terminated = action in self.carparks
         leaving = action not in self.distances.keys()
 
-        norm_dist = -0.1*((self.distance_traveled/100)**2)
-        norm_traf = -0.2*((self.cars_seen)**2)
+        distance_reward = -0.1*((self.distance_traveled/100)**2)
+        traffic_reward = -0.2*((self.cars_seen)**2)
 
-        reward = norm_dist + norm_traf
+        reward = distance_reward + traffic_reward
 
         if terminated: reward += 100
         if leaving: reward -= 500
-        #if action in self.carparks and not terminated: reward += 10
+        
         reward -= (self.visited[self.agent_position] - 1) * 5
-
-        #print(self.traffic_matrix)
 
         return action, reward, terminated, leaving, distance, traffic, self.visited
         
 
-    def reset(self, episode, episodes, seed=None, options=None): 
+    def reset(self, seed=None, options=None): 
+        super().reset(seed=seed)
         if not options:
-            super().reset(seed=seed)
             total_cars = self.generate_traffic3()
-            #self.update_traffic2()
-
-            self.avail_carparks = self.carparks
-            # if episode <= episodes * 0.7:
-            #     self.avail_carparks = self.carparks
-            # else:
-            #     self.avail_carparks = self.np_random.choice(self.carparks, size=self.np_random.choice(range(3, len(self.carparks) + 1)), replace=False)
-
-            position = (73,28)
-            self.agent_position = position[0]
+            self.agent_position = self.np_random.choice(list(self.distances.keys()))
             self.distance_traveled = 0
             self.cars_seen = 0
             self.visited = {}
             self.visited[self.agent_position] = 1
-        else:
-            super().reset(seed=seed)
-            # total_cars = self.generate_traffic3(choice=options["traffic"])
-            total_cars = self.generate_traffic3()
-            self.avail_carparks = self.carparks
-            #self.avail_carparks = options["carparks"]
-            position = self.get_agent_start_position(options)
+        else:   
+            total_cars = self.generate_traffic3(choice=options["traffic"])
             self.distance_traveled = 0
             self.cars_seen = 0
             self.visited = {}
-            self.agent_position = options
+            self.agent_position = options['start']
             self.visited[self.agent_position] = 1
-        
-        self.start_sim(position)
         
         return self.agent_position, total_cars
 
@@ -304,85 +280,5 @@ class QlearningEnv(gymnasium.Env):
             add = 0
             if edge == (10,2) or edge == (73,28): add = self.np_random.choice([0,1])
             self.traffic_matrix[edge[0]][edge[1]] += (new_matrix[edge[0]][edge[1]] + add)
-
-    def get_traffic(self):
-        return self.traffic_matrix
-    
-    def set_traffic(self, new_traffic):
-        self.traffic_matrix = new_traffic
-
-    def update_traffic(self):
-        prob1 = 0.6
-        prob2 = 0.9
-
-        for key, value in self.traffic_matrix.items():
-            for key2, val2 in value.items():
-                if val2:
-                    rand = self.np_random.uniform(0, 1)
-                    if rand <= prob1:
-                        val = self.np_random.choice([0,1,2])
-                    elif rand > prob1 and rand <= prob2:
-                        val = self.np_random.choice([3,4])
-                    else:
-                        val = self.np_random.choice(range(5,8))
-                    
-                    if val == 0: continue
-                    if val <= val2:
-                        if key2 in self.traffic_matrix: 
-                            options = list(self.traffic_matrix[key2].keys())
-    
-                            for _ in range(val):
-                                to_node = self.np_random.choice(options)
-                                self.traffic_matrix[key2][to_node] +=1
-                            self.traffic_matrix[key][key2] -= val
-                        else: 
-                            self.traffic_matrix[key][key2] -= val
-
-                    if val > val2:
-                        if key2 in self.traffic_matrix: 
-                            options = list(self.traffic_matrix[key2].keys())
-                            
-                            for _ in range(val2):
-                                to_node = self.np_random.choice(options)
-                                self.traffic_matrix[key2][to_node] +=1
-                            self.traffic_matrix[key][key2] -= val2
-                        else:
-                            self.traffic_matrix[key][key2] -= val2
-
-    def update_traffic2(self):
-        for car in self.cars:
-            car.update()
-                        
-
-
-class Car:
-    def __init__(self, route, get_traffic, set_traffic, update_int):
-        self.route = route
-        self.position = 0
-        self.get_traffic = get_traffic
-        self.set_traffic = set_traffic
-        self.update_count = 0
-        self.update_int = update_int
-        #print(update_int, route)
-
-    def update(self):
-        if len(self.route) - 1 == self.position: return
-        if self.update_count < self.update_int:
-            self.update_count +=1
-            return
-        
-        traffic = self.get_traffic() 
-        i = self.route[self.position]
-        if self.position > 0:
-            k = self.route[self.position - 1]
-            traffic[k][i] -= 1
-
-        self.position +=1
-        j = self.route[self.position]
-        #print(i,j)
-        traffic[i][j] += 1
-        self.set_traffic(traffic)
-        #self.update_count = 0
-
 
 
